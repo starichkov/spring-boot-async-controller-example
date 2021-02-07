@@ -2,12 +2,12 @@ package org.starichkov.java.spring.async.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.starichkov.java.spring.async.service.GeneratorService;
 
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
 /**
@@ -28,6 +28,12 @@ public class ConcurrentRestController {
 
     @GetMapping("uuid")
     public Future<String> generateRandomUUID() {
-        return CompletableFuture.completedFuture(generatorService.generate());
+        return AsyncResult.forValue(generatorService.generate());
+    }
+
+    @GetMapping("error")
+    public Future<String> generateRandomError() {
+        String uuid = generatorService.generate();
+        return AsyncResult.forExecutionException(new IllegalArgumentException(uuid));
     }
 }
